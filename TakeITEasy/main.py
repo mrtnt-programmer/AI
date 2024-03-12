@@ -14,14 +14,14 @@ cv2.destroyAllWindows()
 
 img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)#convert to hsv
 
-cv2.imshow('Coloured Image', img)
+'''cv2.imshow('Coloured Image', img)
 cv2.waitKey(0)
-cv2.destroyAllWindows()
+cv2.destroyAllWindows()'''
 
 # lower range of red color in HSV
-lower_range = (0, 50, 50)
+lower_range = (0, 0, 0)
 # upper range of red color in HSV
-upper_range = (150, 255, 255)
+upper_range = (240, 240, 240)
 mask = cv2.inRange(img, lower_range, upper_range)
 color_image = cv2.bitwise_and(img, img, mask=mask)
 # Display the color of the image
