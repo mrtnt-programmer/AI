@@ -1,7 +1,7 @@
 import cv2
 from matplotlib import pyplot as plt
 
-img = cv2.imread('img/singlehex.png')
+img = cv2.imread('TakeITEasy\img\singlehex.png')
 img = cv2.resize(img,(800,800))
 
 plt.imshow(img)

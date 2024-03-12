@@ -1,7 +1,7 @@
 import cv2
 from matplotlib import pyplot as plt
 
-img = cv2.imread('img/hex1.jpg')
+img = cv2.imread('TakeITEasy/img/hex1.jpg')
 img = cv2.resize(img,(800,800))
 img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)#convert to hsv
 """cv2.imshow('image',img)
