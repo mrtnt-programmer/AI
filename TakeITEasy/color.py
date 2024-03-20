@@ -27,13 +27,15 @@ cv2.destroyAllWindows()
 
 print(close.shape , img.shape)
 rows,cols = close.shape
-coloredImage = close
+coloredImage = img
 for i in range(rows):
     for j in range(cols):
-        if close[i,j] == 0:
-          coloredImage[i,j] = 0
+        if close[i][j] == 0:
+          coloredImage[i][j] = close[i][j]
 
 cv2.imshow('Coloured Image', coloredImage) 
+cv2.imshow('close', close) 
+
 cv2.waitKey(0)
 cv2.destroyAllWindows()
 
