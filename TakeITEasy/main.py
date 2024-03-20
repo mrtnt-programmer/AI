@@ -6,7 +6,7 @@ from imutils import contours
 import imutils
 
 image = cv2.imread('TakeITEasy\img\hex1.jpg')
-image = cv2.resize(img,(800,800))
+image = cv2.resize(image,(800,800))
 
 cv2.imshow('Coloured Image', image)
 cv2.waitKey(0)

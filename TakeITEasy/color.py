@@ -21,13 +21,19 @@ kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3,3))
 close = cv2.morphologyEx(thresh, cv2.MORPH_CLOSE, kernel, iterations=2)
 
 
-cv2.imshow('Coloured Image', close)
+cv2.imshow('Coloured Image', close) 
 cv2.waitKey(0)
 cv2.destroyAllWindows()
 
-img[close] = (0, 0, 0)
+print(close.shape , img.shape)
+rows,cols = close.shape
+coloredImage = close
+for i in range(rows):
+    for j in range(cols):
+        if close[i,j] == 0:
+          coloredImage[i,j] = 0
 
-cv2.imshow('Coloured Image', img)
+cv2.imshow('Coloured Image', coloredImage) 
 cv2.waitKey(0)
 cv2.destroyAllWindows()
 
