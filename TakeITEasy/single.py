@@ -1,7 +1,7 @@
 import cv2
 from matplotlib import pyplot as plt
 
-img = cv2.imread('TakeITEasy\img\singlehex.png')
+img = cv2.imread('TakeITEasy\img\singlehex.png.png')
 
 cv2.imshow('Coloured Image', img)
 cv2.waitKey(0)
