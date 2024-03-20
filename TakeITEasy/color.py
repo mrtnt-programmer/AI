@@ -26,11 +26,9 @@ thresh = cv2.threshold(sharpen, 160, 255, cv2.THRESH_BINARY_INV)[1]
 kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3,3))
 close = cv2.morphologyEx(thresh, cv2.MORPH_CLOSE, kernel, iterations=2)
 
-
 show(close)
+img = cv2.imread('TakeITEasy\img\hexSimple.jpg')#reload img to avoid img corruption
 
-
-print(close.shape , img.shape)
 rows,cols = close.shape
 coloredImage = img
 for i in range(rows):
@@ -38,7 +36,11 @@ for i in range(rows):
         if close[i][j] != 0:
           coloredImage[i][j] = close[i][j]
 
-show(coloredImage)
+cv2.imshow('Coloured Image', coloredImage) 
+img = cv2.imread('TakeITEasy\img\hexSimple.jpg')#reload img to avoid img corruption
+cv2.imshow('Coloured Image2', img) 
+cv2.waitKey(0)
+cv2.destroyAllWindows()
 
 
 
