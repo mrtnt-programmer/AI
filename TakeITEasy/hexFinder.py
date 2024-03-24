@@ -124,22 +124,35 @@ def detect(img,digit):
   plt.title('Matching Result'), plt.xticks([]), plt.yticks([])
   plt.subplot(122),plt.imshow(p,cmap = 'gray')
   plt.title('Detected Point'+str(digit)), plt.xticks([]), plt.yticks([])
-  plt.show() 
+  #plt.show() 
   return res
 
-def convertProbability(img,seuil):#seuil entre 0-255
+def convertProbability(img,seuil,nombre):#seuil entre 0-255
   rows,cols = img.shape
-  mask = np.zeros((rows,cols, 3), dtype = np.uint8)
+  points = []
   for i in range(rows):
       for j in range(cols):
           if img[i][j] >= seuil:
-            mask[i][j] = img[i][j]
-  return mask 
+            points.append((i,j,nombre))
+  return points 
 
 
+numbers = np.zeros((10, 15))
 probability = 0
-for i in range(1):
-  probability = detect(img,i+1)
+for i in range(1,10):
+  #give all the pixels where numbers could be
+  probability = detect(img,i)
+  min_val, max_val, min_loc, max_loc = cv.minMaxLoc(probability)
+  detected = convertProbability(probability,max_val*6/10,i)
+  #print(detected)
+  #average the pixels into a table
+  rows,cols,_z_ = img.shape
+  ratiox = rows/10
+  ratioy = cols/15
+  for num in detected:
+     #print(num)
+     numbers[int(num[0]/ratiox)][int(num[1]/ratioy)] = num[2]
+print(numbers)
 
 """ testing to find best k value       k = 6/10
 cv.namedWindow('display', cv.WINDOW_NORMAL) 
@@ -152,5 +165,7 @@ while True:
     cv.imshow('display', detected)    
     cv.waitKey(0) 
 """
+
+
 
 
