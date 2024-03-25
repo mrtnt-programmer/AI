@@ -1,6 +1,5 @@
 import cv2 as cv
 import numpy as np
-import time
 
 path = 'TakeITEasy\img'
 
@@ -91,7 +90,7 @@ cv.imwrite(path +'/temp'+ name + '_normalized.png',temp)
 print("Shape of the image", img.shape) 
 piece = img.copy()
 piece = piece[335:470,345:455]
-affiche(piece)
+#affiche(piece)
 def convertGray(img,seuil):#seuil entre 0-255
   img = cv.cvtColor(img , cv.COLOR_BGR2GRAY)
   rows,cols = img.shape
@@ -154,15 +153,6 @@ def detect(img,digit):
   #plt.show() 
   return res
 
-def convertProbability(img,seuil,nombre):#seuil entre 0-255
-  rows,cols = img.shape
-  points = []
-  for i in range(rows):
-      for j in range(cols):
-          if img[i][j] >= seuil:
-            points.append((i,j,nombre))
-  return points 
-
 #trio = [top,bottomLeft,bottomRight]
 tuile = [[None,None,[],None ,None  ],#remplie de trio
         [None,[]   ,[],[]    ,None ],
@@ -174,7 +164,6 @@ probability = 0
 
 for line in range(len(coors)):
   for tile in range(len(coors[line])):
-    print(line,tile,coors[line][tile])
     if coors[line][tile] is not None:
       #print(len(coors[line][tile]) , len(coors[line][tile][0]))
       for coor in range(len(coors[line][tile])):
@@ -188,31 +177,30 @@ for line in range(len(coors)):
           min_val, max_val, min_loc, max_loc = cv.minMaxLoc(probability)
           if max_val>maxscore[1]:
             maxscore = [i,max_val]#number , score of that number
-        print("saving",line,tile,coor)
         tuile[line][tile].append(maxscore[0])
 print(tuile)
-'''detected = convertProbability(probability,max_val*7/10,i)
-        #print(detected)
-        #average the pixels into a table
-        rows,cols,_z_ = img.shape
-        ratiox = rows/10
-        ratioy = cols/15
-        for num in detected:
-          #print(num)
-          numbers[int(num[0]/ratiox)][int(num[1]/ratioy)] = num[2]
-      print(numbers)'''
 
-""" testing to find best k value       k = 6/10
-cv.namedWindow('display', cv.WINDOW_NORMAL) 
-cv.resizeWindow('display', 900, 900) 
+#testing to find best k value       k = 6/10
+def convertProbability(img,seuil):#seuil entre 0-255
+  rows,cols = img.shape
+  mask = np.zeros((rows,cols, 3), dtype = np.uint8)
+  for i in range(rows):
+      for j in range(cols):
+          if img[i][j] >= seuil:
+            mask[i][j] = img[i][j]
+  return mask 
+
 while True:
   for k in range(10):
+    probability = detect(img,i)
     min_val, max_val, min_loc, max_loc = cv.minMaxLoc(probability)
     detected = convertProbability(probability,max_val*k/10)
-    print(k)
+    print(k,max_val)
+    cv.namedWindow('display', cv.WINDOW_NORMAL) 
+    cv.resizeWindow('display', 900, 900) 
     cv.imshow('display', detected)    
     cv.waitKey(0) 
-"""
+
 
 
 
