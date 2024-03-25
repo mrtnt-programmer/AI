@@ -46,17 +46,46 @@ def normalize_image(img):
     M = cv.getPerspectiveTransform(pts1,pts2)
     return cv.warpPerspective(img,M,(800,800))
 
-
 name = '\hex5'
 img = cv.imread(path + name + '.jpg')
-affiche(img)
+#affiche(img)
 
 img = normalize_image(img)
 
 # central piece:
+size = [120,120]
+'''coors = [
+         [100,470],[100,340],[100,200],#left+2
+         [220,540],[220,410],[220,280],[220,140],#left+1
+         [340,600],[340,470],[340,340],[340,200],[340,70],#middle
+         [460,540],[460,410],[460,280],[460,140],#right+1
+         [580,470],[580,340],[580,200]]#right+2
+ '''
+coors = [[None    ,None     ,[340,70] ,None     ,None     ],  
+        [ None    ,[220,140],[340,200],[460,140],None     ],
+        [[100,200],[220,280],[340,340],[460,280],[580,200]],
+        [[100,340],[220,410],[340,470],[460,410],[580,340]],
+        [[100,470],[220,540],[340,600] ,[460,540],[580,470]]]
+#left+2   left+1    #middle   #right+1  #right+2
 temp = img.copy()
-cv.rectangle(temp, (345,335), (455,470), (0,0,255), thickness=2)
+i = 0
+for lines in coors:
+  j=0
+  for coor in lines:
+    if coor is not None:
+      print(coor)
+    #cv.rectangle(temp,coor, np.sum([coor,size],axis=0), (0,0,255), thickness=2)
+      half = np.divide(size,[2,2])
+      miniSize = np.sum([coor,half],axis=0).astype(int)
+      cv.rectangle(temp,(int(coor[0]+(half[1]/2)),int(coor[1])),(int(coor[0]+(half[1]*3/2)),int(coor[1]+half[1])), (255,0,0), thickness=2)#top
+      cv.rectangle(temp,(int(coor[0]),int(coor[1]+half[1])),(int(coor[0]+half[1]),int(coor[1]+size[1])), (255,0,0), thickness=2)#left
+      cv.rectangle(temp,(int(coor[0]+half[0]),int(coor[1]+half[1])),np.sum([coor,size],axis=0), (255,0,0), thickness=2)#right
+      coors[i][j] = [(int(coor[0]+(half[1]/2)),int(coor[1])),(int(coor[0]),int(coor[1]+half[1])),(int(coor[0]+half[0]),int(coor[1]+half[1]))]
+    j += 1
+  i += 1
 affiche(temp)
+#print(coors)
+
 cv.imwrite(path +'/temp'+ name + '_normalized.png',temp)
 
 print("Shape of the image", img.shape) 
@@ -74,7 +103,7 @@ def convertGray(img,seuil):#seuil entre 0-255
   return mask 
 
 gray = convertGray(img,210)
-affiche(gray)
+#affiche(gray)
 #print(rows,cols)
 """hex1
 numb = mask[79:100,8:25]#bot left
@@ -97,8 +126,6 @@ numb = mask[18:38,47:63]#top
 # Adapted from
 # https://docs.opencv.org/4.x/d4/dc6/tutorial_py_template_matching.html
 
-
-
 from matplotlib import pyplot as plt
  
 # looking for a digit:
@@ -114,7 +141,7 @@ def detect(img,digit):
   # Apply template Matching
   res = cv.matchTemplate(p,template,method)
   min_val, max_val, min_loc, max_loc = cv.minMaxLoc(res)
-  print('max val:', max_val)
+  #print('max val:', max_val)
 
   top_left = max_loc
   bottom_right = (top_left[0] + w, top_left[1] + h)
@@ -136,23 +163,44 @@ def convertProbability(img,seuil,nombre):#seuil entre 0-255
             points.append((i,j,nombre))
   return points 
 
+#trio = [top,bottomLeft,bottomRight]
+tuile = [[None,None,[],None ,None  ],#remplie de trio
+        [None,[]   ,[],[]    ,None ],
+        [[]  ,[]   ,[],[]    ,[]   ],
+        [[]  ,[]   ,[],[]    ,[]   ],
+        [[]  ,[]   ,[],[]    ,[]   ]]
 
-numbers = np.zeros((10, 15))
 probability = 0
-for i in range(1,10):
-  #give all the pixels where numbers could be
-  probability = detect(img,i)
-  min_val, max_val, min_loc, max_loc = cv.minMaxLoc(probability)
-  detected = convertProbability(probability,max_val*6/10,i)
-  #print(detected)
-  #average the pixels into a table
-  rows,cols,_z_ = img.shape
-  ratiox = rows/10
-  ratioy = cols/15
-  for num in detected:
-     #print(num)
-     numbers[int(num[0]/ratiox)][int(num[1]/ratioy)] = num[2]
-print(numbers)
+
+for line in range(len(coors)):
+  for tile in range(len(coors[line])):
+    print(line,tile,coors[line][tile])
+    if coors[line][tile] is not None:
+      #print(len(coors[line][tile]) , len(coors[line][tile][0]))
+      for coor in range(len(coors[line][tile])):
+        maxscore = [7,0]#number , score of that number
+        for i in range(1,10):
+          piece = img.copy()
+          LocalCoor = coors[line][tile][coor]
+          piece = piece[LocalCoor[0]:int(LocalCoor[0]+(size[0]/2)),LocalCoor[1]:int(LocalCoor[1]+(size[1]/2))]
+          #give all the pixels where numbers could be
+          probability = detect(piece,i)
+          min_val, max_val, min_loc, max_loc = cv.minMaxLoc(probability)
+          if max_val>maxscore[1]:
+            maxscore = [i,max_val]#number , score of that number
+        print("saving",line,tile,coor)
+        tuile[line][tile].append(maxscore[0])
+print(tuile)
+'''detected = convertProbability(probability,max_val*7/10,i)
+        #print(detected)
+        #average the pixels into a table
+        rows,cols,_z_ = img.shape
+        ratiox = rows/10
+        ratioy = cols/15
+        for num in detected:
+          #print(num)
+          numbers[int(num[0]/ratiox)][int(num[1]/ratioy)] = num[2]
+      print(numbers)'''
 
 """ testing to find best k value       k = 6/10
 cv.namedWindow('display', cv.WINDOW_NORMAL) 
