@@ -5,6 +5,8 @@ pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tessera
 from matplotlib import pyplot as plt
 import random 
 import copy
+from thread import Thread
+from thread import ParallelProcessing
 import time
 
 
@@ -52,7 +54,7 @@ def normalize_image(img):
     M = cv.getPerspectiveTransform(pts1,pts2)
     return cv.warpPerspective(img,M,(800,800))
 
-name = '/hex5'
+name = '/perf'
 img = cv.imread(path + name + '.jpg')
 print(path + name + '.jpg')
 #affiche(img)
@@ -168,8 +170,22 @@ def correct():
             if num !=  '':
               tuile[line][tile][coor] = num
 
-for i in range(15):
-   correct()
-   print("loop",i)
+
+Correcting = ParallelProcessing(function = correct,dataset = [i in range(2)])
+Correcting.start()
+time.sleep(10)
+while Correcting.is_alive():
+  print(Correcting.is_alive())
+
 print(coors)
 print(tuile)
+
+         
+         
+          
+       
+
+
+
+
+
