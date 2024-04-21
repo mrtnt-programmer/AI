@@ -3,9 +3,15 @@ import cv2 as cv
 import numpy as np
 pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract'
 from matplotlib import pyplot as plt
+import random 
+import copy
+from thread import Thread
+from thread import ParallelProcessing
+import time
 
 
-path = 'img'
+
+path = 'TakeITEasy/img'
 def affiche(img):
     cv.namedWindow('display', cv.WINDOW_NORMAL) 
     cv.resizeWindow('display', 900, 900) 
@@ -48,8 +54,9 @@ def normalize_image(img):
     M = cv.getPerspectiveTransform(pts1,pts2)
     return cv.warpPerspective(img,M,(800,800))
 
-name = '\hex4'
+name = '/steph'
 img = cv.imread(path + name + '.jpg')
+print(path + name + '.jpg')
 #affiche(img)
 
 img = normalize_image(img)
@@ -114,49 +121,64 @@ gray = convertGray(img,210)
 
 
 #trio = [top,bottomLeft,bottomRight]
-tuile = [[None,None,[],[]  ,[]   ],#remplie de trio
-        [None,[]   ,[],[]  ,[]   ],
-        [[]  ,[]   ,[],[]  ,[]   ],
-        [[]  ,[]   ,[],[]  ,None ],
-        [[]  ,[]   ,[],None,None ]]
+tuile = [[None,     None,      [[],[],[]],[[],[],[]],[[],[],[]]],#remplie de trio
+        [None,      [[],[],[]],[[],[],[]],[[],[],[]],[[],[],[]]],
+        [[[],[],[]],[[],[],[]],[[],[],[]],[[],[],[]],[[],[],[]]],
+        [[[],[],[]],[[],[],[]],[[],[],[]],[[],[],[]],None      ],
+        [[[],[],[]],[[],[],[]],[[],[],[]],None      ,None      ]]
 
-probability = 0
 
-for line in range(len(coors)):
-  for tile in range(len(coors[line])):
-    if coors[line][tile] is not None:
-      #print(len(coors[line][tile]) , len(coors[line][tile][0]))
-      for coor in range(len(coors[line][tile])):
-        temp = img.copy()
-        LocalCoor = coors[line][tile][coor]
-        piece = temp[LocalCoor[1]:LocalCoor[3],LocalCoor[0]:LocalCoor[2]]
-        #give all the pixels where numbers could be
-        # not sure if higher resolution 2000x2000 would be better:
-        # - sign is so that the number if black with withish background:  
-        piece = -cv.cvtColor(piece , cv.COLOR_BGR2GRAY)
-              # if we know the position of the image on the board, only three possibilities:
-        if coor == 0:
-            whitelist = '159'
-        if coor == 1:
-            whitelist = '267'
-        if coor == 2:
-            whitelist = '348'
-        # --psm 10 is to indicate we're looking for a single character: 
-        coors[line][tile][coor] = pytesseract.image_to_string(piece, config='--psm 10 -c tessedit_char_whitelist=' + whitelist)
-        #print(whitelist,coors[line][tile][coor])########
-        #affiche(piece)
-        #affiche(piece)
+def findNumber(LocalCoor,coor):
+  piece = temp[LocalCoor[1]:LocalCoor[3],LocalCoor[0]:LocalCoor[2]]
+  # - sign is so that the number if black with withish background:  
+  piece = -cv.cvtColor(piece , cv.COLOR_BGR2GRAY)
+        # if we know the position of the image on the board, only three possibilities:
+  if coor == 0:
+      whitelist = '159'
+  if coor == 1:
+      whitelist = '267'
+  if coor == 2:
+      whitelist = '348'
+  # --psm 10 is to indicate we're looking for a single character: 
+  return pytesseract.image_to_string(piece, config='--psm 10 -c tessedit_char_whitelist=' + whitelist)
+   
+temp = img.copy()
+def initialisation():
+  for line in range(len(coors)):
+    for tile in range(len(coors[line])):
+      if coors[line][tile] is not None:
+        for coor in range(len(coors[line][tile])):
+          tuile[line][tile][coor] = findNumber(coors[line][tile][coor],coor)
+
+initialisation()
 print(coors)
-#print(tuile)
+print(tuile)
+print()
 
-for line in range(len(coors)):
-  for tile in range(len(coors[line])):
-    if coors[line][tile] is not None:
-      for coor in range(len(coors[line][tile])):
-       if coors[line][tile][coor] != "":
-          coors[line][tile][coor] = coors[line][tile][coor][0]
+decalage = 20
+def correct():
+  for line in range(len(coors)):
+    for tile in range(len(coors[line])):
+      if coors[line][tile] is not None:
+        for coor in range(len(coors[line][tile])):
+          if tuile[line][tile][coor] != "":
+            tuile[line][tile][coor] = tuile[line][tile][coor][0]
+          else:
+            localCoors = coors[line][tile][coor]
+            localCoors = [localCoors[0]+random.randint(0,decalage),localCoors[1]+random.randint(0,decalage),localCoors[2]+random.randint(0,decalage),localCoors[3]+random.randint(0,decalage)]
+            num = findNumber(localCoors,coor)
+            if num !=  '':
+              tuile[line][tile][coor] = num
+
+
+Correcting = ParallelProcessing(function = correct,dataset = [i in range(2)])
+Correcting.start()
+time.sleep(10)
+while Correcting.is_alive():
+  print(Correcting.is_alive())
 
 print(coors)
+print(tuile)
 
          
          

@@ -1,7 +1,7 @@
 import cv2 as cv
 import numpy as np
 
-path = 'img'
+path = 'TakeITEasy/img'
 
 def affiche(img):
     cv.namedWindow('display', cv.WINDOW_NORMAL) 
