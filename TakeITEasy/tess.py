@@ -204,6 +204,6 @@ def correct(decalageD):
               tuile[line][tile][coor] = num
   return nbrErreur
 for i in range(15):
-   print("loop",i,correct(i))
+   print("loop: ",i,"erreur :"correct(i))
 print(coors)
 print(tuile)
