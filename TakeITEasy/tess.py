@@ -63,13 +63,13 @@ def normalize_image(img):
     pts2 = np.float32([[800,0], [0,0], [0,800], [800,800]])
     M = cv.getPerspectiveTransform(pts1,pts2)
     img_norm = cv.warpPerspective(img,M,(800,800))
-    for i in range(3):
+    """for i in range(3):
         if take_easy_in_top_left(img_norm):
             break
         (h, w) = img_norm.shape[:2]
         (cX, cY) = (w // 2, h // 2)
         M = cv.getRotationMatrix2D((cX, cY), 90, 1.0)
-        img_norm = cv.warpAffine(img_norm, M, (w, h))
+        img_norm = cv.warpAffine(img_norm, M, (w, h))"""
     return img_norm
 
 name = '/hex5'
@@ -107,7 +107,7 @@ for lines in coors:
       rect0 = [int(coor[0]+(part[0]*0)),int(coor[1]+(part[1]*0)),int(coor[0]+(part[0]*100)+size[0]),int(coor[1]+part[1]*100+size[1])]
       rect1 = [int(coor[0]+(part[0]*48)),int(coor[1]+(part[1]*13)),int(coor[0]+(part[0]*52)+size[0]),int(coor[1]+part[1]*17+size[1])]
       rect2 = [int(coor[0]+(part[0]*10)),int(coor[1]+(part[1]*80)),int(coor[0]+(part[0]*20)+size[0]),int(coor[1]+part[1]*90+size[1])]
-      rect3 = [int(coor[0]+(part[0]*0)),int(coor[1]+(part[1]*0)),int(coor[0]+(part[0]*100)+size[0]),int(coor[1]+part[1]*100+size[1])]
+      rect3 = [int(coor[0]+(part[0]*80)),int(coor[1]+(part[1]*80)),int(coor[0]+(part[0]*10)+size[0]),int(coor[1]+part[1]*90+size[1])]
       
       cv.rectangle(temp,(rect0[0],rect0[1]),(rect0[2],rect0[3]),(0,255,255), thickness=2)#top
       cv.rectangle(temp,(rect1[0],rect1[1]),(rect1[2],rect1[3]),(255,255,0), thickness=2)#top
