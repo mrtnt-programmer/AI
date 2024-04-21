@@ -67,7 +67,7 @@ coors = [[None    ,None     ,[340,70] ,[455,135],[570,200]],
         [[105,335],[220,400],[340,470],[455,535],None     ],
         [[105,465],[220,530],[340,600],None     ,None     ]]
 
-size = [55,55]
+size = [30,30]
 """coors = [[None    ,None     ,[377,85] ,None     ,None     ],  
         [ None    ,[220,140],[377,215],[460,140],None     ],
         [[100,200],[220,280],[377,355],[460,280],[580,200]],
@@ -80,15 +80,20 @@ for lines in coors:
   j=0
   for coor in lines:
     if coor is not None:
-      #print(coor)
-    #cv.rectangle(temp,coor, np.sum([coor,size],axis=0), (0,0,255), thickness=2)
-      part = np.divide((size),(100,100))
-      cv.rectangle(temp,(int(coor[0]+(part[0]*90)),int(coor[1]+part[1]*20)),(int(coor[0]+(part[0]*140)),int(coor[1]+part[1]*80)), (255,255,0), thickness=2)#top
-      cv.rectangle(temp,(int(coor[0]+(part[0]*20)),int(coor[1]+part[1]*130)),(int(coor[0]+(part[0]*70)),int(coor[1]+part[1]*200)), (255,0,0), thickness=2)#left
-      cv.rectangle(temp,(int(coor[0]+(part[0]*160)),int(coor[1]+part[1]*130)),(int(coor[0]+(part[0]*210)),int(coor[1]+part[1]*200)), (255,0,0), thickness=2)#right
-      coors[i][j] = [(int(coor[0]+(part[0]*90)),int(coor[1]+part[1]*20),int(coor[0]+(part[0]*140)),int(coor[1]+part[1]*80)),
-                     (int(coor[0]+(part[0]*20)),int(coor[1]+part[1]*130),int(coor[0]+(part[0]*70)),int(coor[1]+part[1]*200)),
-                     (int(coor[0]+(part[0]*160)),int(coor[1]+part[1]*130),int(coor[0]+(part[0]*210)),int(coor[1]+part[1]*200))]
+			#print(coor)
+			#cv.rectangle(temp,coor, np.sum([coor,size],axis=0), (0,0,255), thickness=2)
+      part = [80,80]
+      part = np.divide((part),(100,100))
+      rect0 = [int(coor[0]+(part[0]*0)),int(coor[1]+(part[1]*0)),int(coor[0]+(part[0]*100)+size[0]),int(coor[1]+part[1]*100+size[1])]
+      rect1 = [int(coor[0]+(part[0]*48)),int(coor[1]+(part[1]*13)),int(coor[0]+(part[0]*52)+size[0]),int(coor[1]+part[1]*17+size[1])]
+      rect2 = [int(coor[0]+(part[0]*10)),int(coor[1]+(part[1]*80)),int(coor[0]+(part[0]*20)+size[0]),int(coor[1]+part[1]*90+size[1])]
+      rect3 = [int(coor[0]+(part[0]*0)),int(coor[1]+(part[1]*0)),int(coor[0]+(part[0]*100)+size[0]),int(coor[1]+part[1]*100+size[1])]
+      
+      cv.rectangle(temp,(rect0[0],rect0[1]),(rect0[2],rect0[3]),(0,255,255), thickness=2)#top
+      cv.rectangle(temp,(rect1[0],rect1[1]),(rect1[2],rect1[3]),(255,255,0), thickness=2)#top
+      cv.rectangle(temp,(rect2[0],rect2[1]),(rect2[2],rect2[3]), (255,0,0), thickness=2)#left
+      cv.rectangle(temp,(rect3[0],rect3[1]),(rect3[2],rect3[3]), (255,0,0), thickness=2)#right
+      coors[i][j] = [rect1,rect2,rect3]
     j += 1
   i += 1
 affiche(temp)
