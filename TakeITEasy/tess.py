@@ -186,7 +186,8 @@ print(tuile)
 print()
 
 decalage = 30
-def correct():
+def correct(decalageD):
+  decalage = decalageD*3
   nbrErreur = 0
   for line in range(len(coors)):
     for tile in range(len(coors[line])):
@@ -203,7 +204,6 @@ def correct():
               tuile[line][tile][coor] = num
   return nbrErreur
 for i in range(15):
-   
-   print("loop",i,correct())
+   print("loop",i,correct(i))
 print(coors)
 print(tuile)
