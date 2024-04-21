@@ -70,13 +70,13 @@ def normalize_image(img):
     pts2 = np.float32([[800,0], [0,0], [0,800], [800,800]])
     M = cv.getPerspectiveTransform(pts1,pts2)
     img_norm = cv.warpPerspective(img,M,(800,800))
-    """for i in range(3):
+    for i in range(3):
         if take_easy_in_top_left(img_norm):
             break
         (h, w) = img_norm.shape[:2]
         (cX, cY) = (w // 2, h // 2)
         M = cv.getRotationMatrix2D((cX, cY), 90, 1.0)
-        img_norm = cv.warpAffine(img_norm, M, (w, h))"""
+        img_norm = cv.warpAffine(img_norm, M, (w, h))
     return img_norm
 
 name = '/hex5'
@@ -109,12 +109,12 @@ for lines in coors:
     if coor is not None:
 			#print(coor)
 			#cv.rectangle(temp,coor, np.sum([coor,size],axis=0), (0,0,255), thickness=2)
-      part = [80,80]
+      part = [90,90]
       part = np.divide((part),(100,100))
       rect0 = [int(coor[0]+(part[0]*0)),int(coor[1]+(part[1]*0)),int(coor[0]+(part[0]*100)+size[0]),int(coor[1]+part[1]*100+size[1])]
       rect1 = [int(coor[0]+(part[0]*48)),int(coor[1]+(part[1]*13)),int(coor[0]+(part[0]*52)+size[0]),int(coor[1]+part[1]*17+size[1])]
-      rect2 = [int(coor[0]+(part[0]*10)),int(coor[1]+(part[1]*80)),int(coor[0]+(part[0]*20)+size[0]),int(coor[1]+part[1]*90+size[1])]
-      rect3 = [int(coor[0]+(part[0]*80)),int(coor[1]+(part[1]*80)),int(coor[0]+(part[0]*10)+size[0]),int(coor[1]+part[1]*90+size[1])]
+      rect2 = [int(coor[0]+(part[0]*10)),int(coor[1]+(part[1]*80)),int(coor[0]+(part[0]*15)+size[0]),int(coor[1]+part[1]*90+size[1])]
+      rect3 = [int(coor[0]+(part[0]*85)),int(coor[1]+(part[1]*80)),int(coor[0]+(part[0]*90)+size[0]),int(coor[1]+part[1]*90+size[1])]
       
       cv.rectangle(temp,(rect0[0],rect0[1]),(rect0[2],rect0[3]),(0,255,255), thickness=2)#top
       cv.rectangle(temp,(rect1[0],rect1[1]),(rect1[2],rect1[3]),(255,255,0), thickness=2)#top
@@ -185,8 +185,9 @@ print(coors)
 print(tuile)
 print()
 
-decalage = 20
+decalage = 30
 def correct():
+  nbrErreur = 0
   for line in range(len(coors)):
     for tile in range(len(coors[line])):
       if coors[line][tile] is not None:
@@ -194,14 +195,15 @@ def correct():
           if tuile[line][tile][coor] != "":
             tuile[line][tile][coor] = tuile[line][tile][coor][0]
           else:
+            nbrErreur +=1
             localCoors = coors[line][tile][coor]
             localCoors = [localCoors[0]+random.randint(0,decalage),localCoors[1]+random.randint(0,decalage),localCoors[2]+random.randint(0,decalage),localCoors[3]+random.randint(0,decalage)]
             num = findNumber(localCoors,coor)
             if num !=  '':
               tuile[line][tile][coor] = num
-
+  return nbrErreur
 for i in range(15):
-   correct()
-   print("loop",i)
+   
+   print("loop",i,correct())
 print(coors)
 print(tuile)
