@@ -42,6 +42,18 @@ def find_rectangle(img):
                 
     return approx
 
+def take_easy_in_top_left(img):
+    img_nb = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
+    template = cv.imread(path + '/takeeas.jpg', cv.COLOR_BGR2GRAY)
+    c, w, h = template.shape[::-1]
+    method = cv.TM_CCOEFF
+    res = cv.matchTemplate(img,template,method)
+    min_val, max_val, min_loc, max_loc = cv.minMaxLoc(res)
+    # top_left = max_loc
+    # bottom_right = (top_left[0] + w, top_left[1] + h)
+    # cv.rectangle(img_nb,top_left, bottom_right, 255, 2)
+    return sum(max_loc) < 30
+
 def normalize_image(img):
     approx = find_rectangle(img)
     pts1 = []
@@ -50,7 +62,15 @@ def normalize_image(img):
     pts1 = np.float32(pts1)    
     pts2 = np.float32([[800,0], [0,0], [0,800], [800,800]])
     M = cv.getPerspectiveTransform(pts1,pts2)
-    return cv.warpPerspective(img,M,(800,800))
+    img_norm = cv.warpPerspective(img,M,(800,800))
+    for i in range(3):
+        if take_easy_in_top_left(img_norm):
+            break
+        (h, w) = img_norm.shape[:2]
+        (cX, cY) = (w // 2, h // 2)
+        M = cv.getRotationMatrix2D((cX, cY), 90, 1.0)
+        img_norm = cv.warpAffine(img_norm, M, (w, h))
+    return img_norm
 
 name = '/hex5'
 img = cv.imread(path + name + '.jpg')
