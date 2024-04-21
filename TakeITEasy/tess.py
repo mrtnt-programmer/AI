@@ -1,15 +1,22 @@
 import pytesseract
 import cv2 as cv
 import numpy as np
-pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract'
 from matplotlib import pyplot as plt
 import random 
 import copy
 import time
+import platform
 
+if platform.system() == 'Windows':
+    pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract'
 
+if platform.system() == 'Windows':
+    path = 'TakeITEasy/img'
+elif platform.system() == 'Linux':
+    path = './img'
+else:
+    raise ValueError('Unknown OS')
 
-path = 'TakeITEasy/img'
 def affiche(img):
     cv.namedWindow('display', cv.WINDOW_NORMAL) 
     cv.resizeWindow('display', 900, 900) 
