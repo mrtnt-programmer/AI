@@ -17,10 +17,10 @@ elif platform.system() == 'Linux':
 else:
     raise ValueError('Unknown OS')
 
-def affiche(img):
-    cv.namedWindow('display', cv.WINDOW_NORMAL) 
-    cv.resizeWindow('display', 900, 900) 
-    cv.imshow('display', img)
+def affiche(img,title='display'):
+    cv.namedWindow(title, cv.WINDOW_NORMAL)
+    cv.resizeWindow(title, 900, 900)
+    cv.imshow(title, img)
     cv.waitKey(0) 
     cv.destroyAllWindows() 
     
