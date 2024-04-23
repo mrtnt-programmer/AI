@@ -79,7 +79,7 @@ def normalize_image(img):
         img_norm = cv.warpAffine(img_norm, M, (w, h))
     return img_norm
 
-name = '/hex5'
+name = '/perf'
 img = cv.imread(path + name + '.jpg')
 print(path + name + '.jpg')
 #affiche(img)
@@ -203,7 +203,13 @@ def correct(decalageD):
             if num !=  '':
               tuile[line][tile][coor] = num
   return nbrErreur
-for i in range(15):
+
+for i in range(5):
    print("loop: ",i,"erreur :",correct(i))
+k = i
+while correct(k) > 0:
+   print("loop: ",k,"erreur :",correct(i))
+   k+=1
+
 print(coors)
 print(tuile)
