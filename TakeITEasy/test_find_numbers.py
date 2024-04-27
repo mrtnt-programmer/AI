@@ -2,8 +2,13 @@ from functions import *
 from functions_steph import *
 from math import sqrt
 
+def filter_BW(img):
+  # to be done
+  return img
+
+
 def find_number(img, pos): 
-  piece = -cv.cvtColor(img, cv.COLOR_BGR2GRAY)
+  piece = filter_BW(-cv.cvtColor(img, cv.COLOR_BGR2GRAY))
         # if we know the position of the image on the board, only three possibilities:
   if pos == 'top':
       whitelist = '159'
@@ -15,7 +20,7 @@ def find_number(img, pos):
   result = pytesseract.image_to_string(piece, config='--psm 10 -c tessedit_char_whitelist=' + whitelist)
   if result == '':
     for i in whitelist:
-      template = cv.imread(path + '/numbers/' + i + '.png', cv.COLOR_BGR2GRAY)
+      template = filter_BW(cv.imread(path + '/numbers/' + i + '.png', cv.COLOR_BGR2GRAY))
       c, w, h = template.shape[::-1]
       method = cv.TM_CCOEFF
       res = cv.matchTemplate(img,template,method)
